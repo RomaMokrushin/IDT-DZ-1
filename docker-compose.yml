@@ -1,0 +1,38 @@
+services:
+  app:
+    build: .
+    ports:
+      - "${PORT:-8000}:${PORT:-8000}"
+    environment:
+      PORT: "${PORT:-8000}"
+      GREETING: "${GREETING:-Hi}"
+      STORAGE: "${STORAGE:-sqlite}"
+      DATA_FILE: "${DATA_FILE:-/data/counter.db}"
+      REDIS_URL: "${REDIS_URL:-redis://redis:6379/0}"
+    volumes:
+      - app_data:/data
+    depends_on:
+      redis:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import os,urllib.request as u; u.urlopen('http://localhost:%s/healthz' % os.environ['PORT'], timeout=2)"]
+      interval: 3s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  redis:
+    image: redis:7.4-alpine
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  app_data:
+  redis_data:
+

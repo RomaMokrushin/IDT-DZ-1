@@ -1,0 +1,52 @@
+4 балла:
+    roman-mokrushin@roman-mokrushin-Redmi-Book-14-2024:~/vscode/projects/IDT-DZ-1$ sudo docker build -t myapp .
+    roman-mokrushin@roman-mokrushin-Redmi-Book-14-2024:~/vscode/projects/IDT-DZ-1$ sudo docker run -p 8000:8000 -e STORAGE=sqlite -d myapp
+    e23f81b84601ae841689ea80fa8e80ddddeade5f2c486a1b34dba57f762957aa
+    roman-mokrushin@roman-mokrushin-Redmi-Book-14-2024:~/vscode/projects/IDT-DZ-1$ curl -fsS -X POST http://127.0.0.1:8000/increment
+    {"greeting": "Hello, Docker!", "count": 1, "hostname": "e23f81b84601", "storage": "sqlite"}
+    roman-mokrushin@roman-mokrushin-Redmi-Book-14-2024:~/vscode/projects/IDT-DZ-1$ curl -fsS -X POST http://127.0.0.1:8000/increment
+    {"greeting": "Hello, Docker!", "count": 2, "hostname": "e23f81b84601", "storage": "sqlite"}
+    roman-mokrushin@roman-mokrushin-Redmi-Book-14-2024:~/vscode/projects/IDT-DZ-1$ sudo docker logs e23f81b84601ae841689ea80fa8e80ddddeade5f2c486a1b34dba57f762957aa
+    2026-11-15 13:07:54,688 listening port=8000 storage=sqlite
+    2026-11-15 13:08:27,897 http 172.17.0.1 "POST /increment HTTP/1.1" 200 -
+    2026-11-15 13:08:28,722 http 172.17.0.1 "POST /increment HTTP/1.1" 200 -
+
+6 баллов:
+    roman-mokrushin@roman-mokrushin-Redmi-Book-14-2024:~/vscode/projects/IDT-DZ-1$ sudo docker compose up --build -d
+    roman-mokrushin@roman-mokrushin-Redmi-Book-14-2024:~/vscode/projects/IDT-DZ-1$ curl -fsS -X POST http://127.0.0.1:8000/increment
+    {"greeting": "Hello, Docker!", "count": 5, "hostname": "52f7dda6acac", "storage": "sqlite"}
+    roman-mokrushin@roman-mokrushin-Redmi-Book-14-2024:~/vscode/projects/IDT-DZ-1$ sudo docker stop 52f7dda6acac
+    52f7dda6acac
+    roman-mokrushin@roman-mokrushin-Redmi-Book-14-2024:~/vscode/projects/IDT-DZ-1$ sudo docker rm 52f7dda6acac
+    52f7dda6acac
+    roman-mokrushin@roman-mokrushin-Redmi-Book-14-2024:~/vscode/projects/IDT-DZ-1$ sudo docker compose up --build -d
+    roman-mokrushin@roman-mokrushin-Redmi-Book-14-2024:~/vscode/projects/IDT-DZ-1$ curl -fsS -X POST http://127.0.0.1:8000/increment
+    {"greeting": "Hello, Docker!", "count": 6, "hostname": "24f1212e25d8", "storage": "sqlite"} 
+
+8 баллов:
+    roman-mokrushin@roman-mokrushin-Redmi-Book-14-2024:~/vscode/projects/IDT-DZ-1$ sudo docker compose up --build -d
+    roman-mokrushin@roman-mokrushin-Redmi-Book-14-2024:~/vscode/projects/IDT-DZ-1$ curl -fsS -X POST http://127.0.0.1:8000/increment
+    {"greeting": "Hello, Docker!", "count": 10, "hostname": "d677a575ff38", "storage": "redis"}roman-mokrushin@roman-mokrushin-Redmi-Book-14-2024:~/vscode/projects/IDT-DZ-1$ curl -fsS -X POST http://127.0.0.1:8000/increment
+    {"greeting": "Hello, Docker!", "count": 11, "hostname": "d677a575ff38", "storage": "redis"}roman-mokrushin@roman-mokrushin-Redmi-Book-14-2024:~/vscode/projects/IDT-DZ-1$ sudo docker compose down
+    [+] down 3/3
+    ✔ Container idt-dz-1-app-1   Removed                                                                                  10.6s
+    ✔ Container idt-dz-1-redis-1 Removed                                                                                   0.4s
+    ✔ Network idt-dz-1_default   Removed                                                     
+    roman-mokrushin@roman-mokrushin-Redmi-Book-14-2024:~/vscode/projects/IDT-DZ-1$ sudo docker compose up --build -d
+    roman-mokrushin@roman-mokrushin-Redmi-Book-14-2024:~/vscode/projects/IDT-DZ-1$ curl -fsS http://127.0.0.1:8000/
+    {"greeting": "Hello, Docker!", "count": 11, "hostname": "f396966c7d26", "storage": "redis"}
+    roman-mokrushin@roman-mokrushin-Redmi-Book-14-2024:~/vscode/projects/IDT-DZ-1$ sudo docker compose stop redis
+    [+] stop 1/1
+    ✔ Container idt-dz-1-redis-1 Stopped  
+    roman-mokrushin@roman-mokrushin-Redmi-Book-14-2024:~/vscode/projects/IDT-DZ-1$ curl -fsS http://127.0.0.1:8000/healthz
+    {"status": "alive"}roman-mokrushin@roman-mokrushin-Redmi-Book-14-2024:~/vscode/projects/IDT-DZ-1$ curl -fsS http://127.0.0.1:8000/readyz
+    curl: (22) The requested URL returned error: 503
+    roman-mokrushin@roman-mokrushin-Redmi-Book-14-2024:~/vscode/projects/IDT-DZ-1$ curl -fsS -X POST http://127.0.0.1:8000/increment
+    curl: (22) The requested URL returned error: 503
+    roman-mokrushin@roman-mokrushin-Redmi-Book-14-2024:~/vscode/projects/IDT-DZ-1$ sudo docker compose start redis
+    [+] start 1/1
+    ✔ Container idt-dz-1-redis-1 Started 
+    roman-mokrushin@roman-mokrushin-Redmi-Book-14-2024:~/vscode/projects/IDT-DZ-1$ curl -fsS http://127.0.0.1:8000/
+    {"greeting": "Hello, Docker!", "count": 11, "hostname": "f396966c7d26", "storage": "redis"}
+    roman-mokrushin@roman-mokrushin-Redmi-Book-14-2024:~/vscode/projects/IDT-DZ-1$ curl -fsS -X POST http://127.0.0.1:8000/increment
+    {"greeting": "Hello, Docker!", "count": 12, "hostname": "f396966c7d26", "storage": "redis"}
